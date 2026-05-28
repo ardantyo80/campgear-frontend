@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900 font-sans;
+  }
+}
+/* ========== RESPONSIVE UTILITIES ========== */
+@media (max-width: 768px) {
+  /* Typography */
+  h1 {
+    font-size: 1.8rem !important;
+  }
+  h2 {
+    font-size: 1.5rem !important;
+  }
+  h3 {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Container padding */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Grid menjadi 1 kolom */
+  .grid-cols-1\@mobile {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Card padding lebih kecil */
+  .card-padding {
+    padding: 1rem !important;
+  }
+  
+  /* Tombol full width di mobile */
+  .btn-full-mobile {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  /* Flex column di mobile */
+  .flex-col-mobile {
+    flex-direction: column !important;
+  }
+  
+  /* Gap lebih kecil */
+  .gap-sm-mobile {
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Untuk layar sangat kecil (iPhone SE, dll) */
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .text-center-mobile {
+    text-align: center !important;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
