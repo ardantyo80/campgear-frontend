@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -23,7 +23,7 @@ import AdminLayout from './components/AdminLayout';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <HashRouter> 
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-grow">
@@ -53,7 +53,7 @@ function App() {
           </main>
           <Footer />
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </AuthProvider>
   );
 }
