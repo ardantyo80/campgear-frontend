@@ -119,7 +119,7 @@ const Products = () => {
         </div>
       )}
 
-      {/* Grid Produk */}
+      {/* Grid Produk - Responsive dengan Aspect Ratio Fixed */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-500 text-lg">
@@ -133,22 +133,23 @@ const Products = () => {
           {filteredProducts.map((product) => (
             <div 
               key={product.id} 
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 group"
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 group flex flex-col h-full"
             >
-              {/* Thumbnail */}
-              <div className="overflow-hidden">
+              {/* Gambar dengan Aspect Ratio Fixed */}
+              <div className="relative w-full bg-gray-100" style={{ paddingBottom: '100%' }}>
                 <img
-                 src={`${product.thumbnail}?t=${new Date().getTime()}`}
+                  src={product.thumbnail || 'https://placehold.co/600x600/2E7D32/white?text=CampGear'}
                   alt={product.name}
-                  className="..."
+                  className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  loading="lazy"
                 />
               </div>
               
               {/* Content */}
-              <div className="p-3 md:p-4">
+              <div className="p-3 md:p-4 flex flex-col flex-grow">
                 <h3 className="font-semibold text-base md:text-lg mb-1 line-clamp-1">{product.name}</h3>
                 
-                <p className="text-green-600 font-bold text-sm md:text-base">
+                <p className="text-green-600 font-bold text-sm md:text-base mt-auto">
                   Rp {product.price_per_day?.toLocaleString() || 0}/hari
                 </p>
                 
