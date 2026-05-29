@@ -153,17 +153,32 @@ const Products = () => {
                   Rp {product.price_per_day?.toLocaleString() || 0}/hari
                 </p>
                 
-                {product.stock_limited && (
-                  <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mt-2">
-                    ⚠️ Stok terbatas
+                {/* ✅ STOCK STATUS - UPDATED */}
+                {product.stock === 0 ? (
+                  <span className="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded mt-2">
+                    ❌ Stok habis
                   </span>
-                )}
+                ) : product.stock_limited && product.stock < 2 ? (
+                  <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mt-2">
+                    ⚠️ Stok terbatas (sisa {product.stock})
+                  </span>
+                ) : null}
                 
+                {/* ✅ BUTTON - DISABLED IF STOCK = 0 */}
                 <Link
-                  to={`/products/${product.slug}`}
-                  className="block text-center mt-3 bg-green-600 text-white py-2 rounded text-sm md:text-base hover:bg-green-700 transition"
+                  to={product.stock === 0 ? '#' : `/products/${product.slug}`}
+                  className={`block text-center mt-3 py-2 rounded text-sm md:text-base transition ${
+                    product.stock === 0 
+                      ? 'bg-gray-400 text-white cursor-not-allowed pointer-events-none' 
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                  onClick={(e) => {
+                    if (product.stock === 0) {
+                      e.preventDefault();
+                    }
+                  }}
                 >
-                  Lihat Detail
+                  {product.stock === 0 ? 'Stok Habis' : 'Lihat Detail'}
                 </Link>
               </div>
             </div>
