@@ -15,20 +15,15 @@ const Login = () => {
     setLoading(true);
     setError('');
     
-    try {
-      await login(email, password);
+    const result = await login(email, password);
+    
+    if (result.success) {
       navigate('/');
-    } catch (err) {
-      // Cek response error dari backend
-      // eslint-disable-next-line no-unused-vars
-      const errorMessage = err.response?.data?.errors?.email?.[0] || 
-                          err.response?.data?.message || 
-                          'Email atau password salah';
-      
-      setError('Email atau password salah');
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error || 'Email atau password salah');
     }
+    
+    setLoading(false);
   };
 
   return (

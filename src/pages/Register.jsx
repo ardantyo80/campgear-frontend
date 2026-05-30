@@ -17,7 +17,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validasi panjang password
     if (form.password.length < 6) {
       setError('Password minimal 6 karakter');
       return;
@@ -31,24 +30,20 @@ const Register = () => {
     setLoading(true);
     setError('');
     
-    try {
-      await register(form);
+    const result = await register(form);
+    
+    if (result.success) {
       navigate('/');
-    } catch (err) {
-      // Cek response error dari backend
-      const errorMessage = err.response?.data?.errors?.email?.[0] || 
-                          err.response?.data?.message || 
-                          'Gagal mendaftar, coba lagi';
-      
-      // Jika error karena email sudah terdaftar
-      if (errorMessage.includes('already been taken') || errorMessage.includes('email sudah terdaftar')) {
-        setError('Email sudah terdaftar. Silakan gunakan email lain atau login.');
-      } else {
-        setError(errorMessage);
+    } else {
+      // Cek apakah error karena email sudah terdaftar
+      let errorMessage = result.error || 'Gagal mendaftar';
+      if (errorMessage.includes('already been taken') || errorMessage.includes('email')) {
+        errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
       }
-    } finally {
-      setLoading(false);
+      setError(errorMessage);
     }
+    
+    setLoading(false);
   };
 
   return (
