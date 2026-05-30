@@ -16,18 +16,36 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validasi panjang password
+    if (form.password.length < 6) {
+      setError('Password minimal 6 karakter');
+      return;
+    }
+    
     if (form.password !== form.password_confirmation) {
       setError('Password tidak cocok');
       return;
     }
+    
     setLoading(true);
     setError('');
+    
     try {
       await register(form);
       navigate('/');
-    // eslint-disable-next-line no-unused-vars
     } catch (err) {
-      setError('Gagal mendaftar, coba lagi');
+      // Cek response error dari backend
+      const errorMessage = err.response?.data?.errors?.email?.[0] || 
+                          err.response?.data?.message || 
+                          'Gagal mendaftar, coba lagi';
+      
+      // Jika error karena email sudah terdaftar
+      if (errorMessage.includes('already been taken') || errorMessage.includes('email sudah terdaftar')) {
+        setError('Email sudah terdaftar. Silakan gunakan email lain atau login.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -37,36 +55,51 @@ const Register = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h1 className="text-2xl font-bold text-center mb-6 text-green-600">Daftar</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Nama Lengkap"
             className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
           />
+          
           <input
             type="email"
             placeholder="Email"
             className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
           />
+          
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Password (minimal 6 karakter)"
             className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
+            minLength="6"
             required
           />
+          
           <input
             type="password"
             placeholder="Konfirmasi Password"
             className="w-full p-3 border rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={form.password_confirmation}
             onChange={(e) => setForm({ ...form, password_confirmation: e.target.value })}
             required
           />
+          
           <button
             type="submit"
             disabled={loading}
@@ -75,6 +108,7 @@ const Register = () => {
             {loading ? 'Memproses...' : 'Daftar'}
           </button>
         </form>
+        
         <p className="text-center mt-4 text-gray-600">
           Sudah punya akun? <Link to="/login" className="text-green-600 hover:underline">Login</Link>
         </p>

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -15,10 +14,17 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
     try {
       await login(email, password);
       navigate('/');
     } catch (err) {
+      // Cek response error dari backend
+      // eslint-disable-next-line no-unused-vars
+      const errorMessage = err.response?.data?.errors?.email?.[0] || 
+                          err.response?.data?.message || 
+                          'Email atau password salah';
+      
       setError('Email atau password salah');
     } finally {
       setLoading(false);
@@ -29,7 +35,13 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h1 className="text-2xl font-bold text-center mb-6 text-green-600">Login</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -39,14 +51,17 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Password (minimal 6 karakter)"
             className="w-full p-3 border rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-green-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            minLength="6"
             required
           />
+          
           <button
             type="submit"
             disabled={loading}
@@ -55,6 +70,7 @@ const Login = () => {
             {loading ? 'Memproses...' : 'Login'}
           </button>
         </form>
+        
         <p className="text-center mt-4 text-gray-600">
           Belum punya akun? <Link to="/register" className="text-green-600 hover:underline">Daftar</Link>
         </p>
