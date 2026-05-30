@@ -30,20 +30,48 @@ const Register = () => {
     setLoading(true);
     setError('');
     
-    const result = await register(form);
-    
-    if (result.success) {
-      navigate('/');
-    } else {
-      // Cek apakah error karena email sudah terdaftar
-      let errorMessage = result.error || 'Gagal mendaftar';
-      if (errorMessage.includes('already been taken') || errorMessage.includes('email')) {
-        errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
+    try {
+      const response = await register(form);
+      
+      if (response.success) {
+        navigate('/');
+      } else {
+        let errorMessage = response.error || 'Gagal mendaftar';
+        
+        if (response.errors?.email) {
+          errorMessage = response.errors.email[0];
+          if (errorMessage.includes('already been taken')) {
+            errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
+          }
+        }
+        
+        setError(errorMessage);
       }
+    } catch (err) {
+      console.error('Register error:', err);
+      
+      let errorMessage = 'Gagal mendaftar. Silakan coba lagi.';
+      
+      if (err.response?.status === 422) {
+        const errors = err.response.data?.errors;
+        if (errors?.email) {
+          errorMessage = errors.email[0];
+          if (errorMessage.includes('already been taken')) {
+            errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
+          }
+        } else if (errors?.password) {
+          errorMessage = errors.password[0];
+        } else if (errors?.name) {
+          errorMessage = errors.name[0];
+        }
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      
       setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (

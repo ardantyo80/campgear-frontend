@@ -15,15 +15,52 @@ const Login = () => {
     setLoading(true);
     setError('');
     
-    const result = await login(email, password);
-    
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.error || 'Email atau password salah');
+    try {
+      const response = await login(email, password);
+      
+      if (response.success) {
+        navigate('/');
+      } else {
+        // Ambil pesan error dari response
+        let errorMessage = response.error || 'Email atau password salah';
+        
+        // Jika error dari validasi Laravel (422)
+        if (response.errors) {
+          if (response.errors.email) {
+            errorMessage = response.errors.email[0];
+          } else if (response.errors.password) {
+            errorMessage = response.errors.password[0];
+          }
+        }
+        
+        setError(errorMessage);
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      
+      // Tangkap error dari Axios
+      let errorMessage = 'Email atau password salah';
+      
+      if (err.response?.status === 422) {
+        // Validasi error dari Laravel
+        const errors = err.response.data?.errors;
+        if (errors) {
+          if (errors.email) {
+            errorMessage = errors.email[0];
+          } else if (errors.password) {
+            errorMessage = errors.password[0];
+          } else {
+            errorMessage = err.response.data?.message || 'Email atau password salah';
+          }
+        }
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (

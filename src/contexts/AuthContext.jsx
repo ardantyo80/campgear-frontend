@@ -33,43 +33,48 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // Login
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/login', { email, password });
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setUser(user);
-      
-      return { success: true, user };
-    } catch (error) {
-      console.error('Login error:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login gagal' 
-      };
-    }
-  };
+ // Login
+const login = async (email, password) => {
+  try {
+    const response = await api.post('/login', { email, password });
+    const { user, token } = response.data;
+    
+    localStorage.setItem('token', token);
+    setUser(user);
+    
+    return { success: true, user };
+  } catch (error) {
+    console.error('Login error:', error);
+    
+    // Kirim detail error dari backend
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Login gagal',
+      errors: error.response?.data?.errors || null
+    };
+  }
+};
 
-  // Register
-  const register = async (userData) => {
-    try {
-      const response = await api.post('/register', userData);
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setUser(user);
-      
-      return { success: true, user };
-    } catch (error) {
-      console.error('Register error:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Registrasi gagal' 
-      };
-    }
-  };
+// Register
+const register = async (userData) => {
+  try {
+    const response = await api.post('/register', userData);
+    const { user, token } = response.data;
+    
+    localStorage.setItem('token', token);
+    setUser(user);
+    
+    return { success: true, user };
+  } catch (error) {
+    console.error('Register error:', error);
+    
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Registrasi gagal',
+      errors: error.response?.data?.errors || null
+    };
+  }
+};
 
   // Logout
   const logout = async () => {
