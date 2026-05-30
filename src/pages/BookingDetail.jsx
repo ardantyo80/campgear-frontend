@@ -167,37 +167,43 @@ const BookingDetail = () => {
           </div>
 
           {/* Items */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-3 border-b pb-2">Detail Pemesanan</h3>
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left py-2 px-3 text-sm font-semibold">Produk</th>
-                  <th className="text-center py-2 px-3 text-sm font-semibold">Qty</th>
-                  <th className="text-right py-2 px-3 text-sm font-semibold">Harga/hari</th>
-                  <th className="text-right py-2 px-3 text-sm font-semibold">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {booking.items?.map((item) => (
-                  <tr key={item.id} className="border-b">
-                    <td className="py-2 px-3">{item.product_name}</td>
-                    <td className="text-center py-2 px-3">{item.quantity}</td>
-                    <td className="text-right py-2 px-3">Rp {item.price_per_day?.toLocaleString()}</td>
-                    <td className="text-right py-2 px-3">Rp {item.subtotal?.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="border-t-2">
-                  <td colSpan="3" className="text-right py-3 px-3 font-semibold">Total</td>
-                  <td className="text-right py-3 px-3 font-bold text-green-600">
-                    Rp {booking.total_price?.toLocaleString()}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+<div className="mb-6">
+  <h3 className="font-semibold text-lg mb-3 border-b pb-2">Detail Pemesanan</h3>
+  <table className="w-full">
+    <thead className="bg-gray-50">
+      <tr>
+        <th className="text-left py-2 px-3 text-sm font-semibold">Produk</th>
+        <th className="text-center py-2 px-3 text-sm font-semibold">Qty</th>
+        <th className="text-right py-2 px-3 text-sm font-semibold">Harga/hari</th>
+        <th className="text-right py-2 px-3 text-sm font-semibold">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {booking.items?.map((item) => (
+        <tr key={item.id} className="border-b">
+          <td className="py-2 px-3">
+            {item.product_name || item.product?.name || 'Produk tidak tersedia'}
+          </td>
+          <td className="text-center py-2 px-3">{item.quantity}</td>
+          <td className="text-right py-2 px-3">
+            Rp {item.price_per_day?.toLocaleString() || 0}
+          </td>
+          <td className="text-right py-2 px-3">
+            Rp {item.subtotal?.toLocaleString() || 0}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+    <tfoot>
+      <tr className="border-t-2">
+        <td colSpan="3" className="text-right py-3 px-3 font-semibold">Total</td>
+        <td className="text-right py-3 px-3 font-bold text-green-600">
+          Rp {booking.total_price?.toLocaleString() || 0}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
 
           {/* Catatan */}
           {booking.notes && (
